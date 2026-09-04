@@ -176,12 +176,25 @@ HTML_TEMPLATE = r"""<!doctype html>
   .mono { font-variant-numeric: tabular-nums; }
 
   @media print {
+    @page { size: landscape; margin: 12mm; }
     body { background: #fff; }
+    .wrap { max-width: none; padding: 0; }
     .no-print { display: none !important; }
     .page { display: block !important; page-break-before: always; }
-    .page:first-child { page-break-before: auto; }
-    section { break-inside: avoid; border: 1px solid #ddd; }
+    /* #page-overview is the first .page in the DOM, right after the note -
+       it must NOT break before it. ":first-child" doesn't work here since
+       the header/nav/filter bar/note precede it, so it's never literally
+       its parent's first child; target it by id instead. */
+    #page-overview { page-break-before: auto; }
+    section { border: 1px solid #ddd; }
     :root { color-scheme: light; }
+    /* Wide tables (Client Directory etc.) scroll horizontally on screen -
+       print can't scroll, so let cells wrap instead of being clipped. */
+    .table-scroll { overflow-x: visible; }
+    table { font-size: 10px; }
+    th, td { white-space: normal; padding: 5px 6px; }
+    thead { display: table-header-group; } /* repeat header row when a table splits across pages */
+    .chart-container { break-inside: avoid; }
   }
 </style>
 </head>

@@ -115,6 +115,10 @@ Enable-ScheduledTask -TaskName "UnifiReportsCollector"
   (`AllowStartIfOnBatteries` / `DontStopIfGoingOnBatteries`). Only matters
   if the target machine is a laptop rather than a desktop/server - but the
   setting is harmless either way.
+- **Console window flash:** the task runs via `powershell.exe -WindowStyle
+  Hidden` specifically to avoid a visible console popping up every run. Don't
+  swap this back to a plain `cmd.exe` action without a reason - that's what
+  caused it originally.
 - **Connector Proxy timeouts:** the UniFi cloud relay
   (`api.ui.com` -> console) times out occasionally - this is normal,
   observed in practice, not specific to any one machine. `collector.py`

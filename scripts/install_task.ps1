@@ -46,8 +46,15 @@ if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
 }
 
-$cmdArg = '/c "' + "`"$python`" scripts\collector.py > data\collector_log.txt 2>&1 && `"$python`" scripts\report.py >> data\collector_log.txt 2>&1" + '"'
-$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument $cmdArg -WorkingDirectory "$ProjectRoot"
+# powershell.exe -WindowStyle Hidden suppresses the console window without
+# needing an elevated/S4U principal (which requires admin rights to
+# register - tried that first, it failed with Access Denied on a
+# non-elevated session and left the task unregistered; this doesn't have
+# that problem).
+$innerCmd = "& `"$python`" scripts\collector.py *> data\collector_log.txt; & `"$python`" scripts\report.py *>> data\collector_log.txt"
+$action = New-ScheduledTaskAction -Execute "powershell.exe" `
+    -Argument "-NoProfile -WindowStyle Hidden -Command `"$innerCmd`"" `
+    -WorkingDirectory "$ProjectRoot"
 $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) `
     -RepetitionInterval (New-TimeSpan -Minutes $IntervalMinutes) `
     -RepetitionDuration (New-TimeSpan -Days 3650)
@@ -55,7 +62,7 @@ $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) `
 # task silently sits "Queued" forever on any machine not on AC power - hit
 # this during initial setup, see docs/DEPLOYMENT.md.
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
-    -ExecutionTimeLimit (New-TimeSpan -Minutes 5)
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 5) -Hidden
 
 Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
     -Description "Polls UniFi Site Manager API for Proton Promotions client/device stats and regenerates report.html, every $IntervalMinutes min" `

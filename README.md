@@ -128,6 +128,14 @@ on AC power. Explicitly disabled via `AllowStartIfOnBatteries` /
 carry that setting over or it'll intermittently stop collecting data
 without any visible error.
 
+**Also fixed during setup:** the task originally launched via `cmd.exe`,
+which pops a visible console window on screen for a couple of seconds every
+run. Fixed by launching through `powershell.exe -WindowStyle Hidden`
+instead — no elevation needed. (A tempting alternative, an S4U principal
+for a fully non-interactive session, needs admin rights to register; tried
+it, got `Access Denied` on a standard session, and it briefly left the task
+unregistered. Not worth it for what's a cosmetic annoyance.)
+
 **Also worth knowing:** the Connector Proxy (`api.ui.com` → console relay)
 times out occasionally — observed directly during setup, not
 hypothetical. `unifi_client.api_get` retries transient network failures
