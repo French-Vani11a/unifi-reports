@@ -176,7 +176,7 @@ HTML_TEMPLATE = r"""<!doctype html>
   .mono { font-variant-numeric: tabular-nums; }
 
   @media print {
-    @page { size: landscape; margin: 12mm; }
+    @page { size: portrait; margin: 10mm; }
     body { background: #fff; }
     .wrap { max-width: none; padding: 0; }
     .no-print { display: none !important; }
@@ -191,8 +191,9 @@ HTML_TEMPLATE = r"""<!doctype html>
     /* Wide tables (Client Directory etc.) scroll horizontally on screen -
        print can't scroll, so let cells wrap instead of being clipped. */
     .table-scroll { overflow-x: visible; }
-    table { font-size: 10px; }
-    th, td { white-space: normal; padding: 5px 6px; }
+    table { font-size: 7.5px; table-layout: fixed; width: 100%; }
+    th, td { white-space: normal; padding: 3px 4px; overflow-wrap: break-word; }
+    .tiles { grid-template-columns: repeat(3, 1fr); }
     thead { display: table-header-group; } /* repeat header row when a table splits across pages */
     .chart-container { break-inside: avoid; }
   }
