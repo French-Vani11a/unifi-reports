@@ -14,7 +14,13 @@ depend on someone's laptop staying awake.
   ```powershell
   python --version
   ```
-  If missing, install from [python.org](https://www.python.org/downloads/) or:
+  **Watch out:** on a machine where Python was never installed, `python`
+  still exists on PATH as a Microsoft Store stub that prints something like
+  "Python was not found; run without arguments to install from the
+  Microsoft Store" - that's not a real install, and `install_task.ps1`
+  will correctly refuse to use it rather than silently registering a
+  broken task. If you see that message, install the real thing:
+  [python.org](https://www.python.org/downloads/) or:
   ```powershell
   winget install Python.Python.3.13
   ```
@@ -60,6 +66,14 @@ command):
 From the project root on the new machine:
 ```powershell
 .\scripts\install_task.ps1
+```
+
+If you get `running scripts is disabled on this system` - that's PowerShell's
+default execution policy blocking unsigned scripts, a common default on
+machines that don't normally run scripts. Bypass it for just this one run
+(doesn't change any persistent system setting):
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install_task.ps1
 ```
 
 This finds Python automatically, registers the `UnifiReportsCollector`

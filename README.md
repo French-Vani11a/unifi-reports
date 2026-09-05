@@ -7,8 +7,11 @@ management machine has no local network access to the console — only remote
 access via unifi.ui.
 
 See [docs/api-notes.md](docs/api-notes.md) for the full research/reasoning
-behind the approach below, and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for
-moving this to a different always-on machine.
+behind the approach below, [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for
+moving this to a different always-on Windows machine, and
+[docs/DEPLOYMENT-LINUX.md](docs/DEPLOYMENT-LINUX.md) for a Linux server
+(the collector/report scripts themselves are plain stdlib Python and work
+unchanged - only the task-scheduling piece differs).
 
 ## Approach
 

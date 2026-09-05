@@ -22,10 +22,15 @@ $ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 Write-Output "Project root: $ProjectRoot"
 
 # --- Locate Python ---
-$python = (Get-Command python -ErrorAction SilentlyContinue).Source
-if (-not $python) { $python = (Get-Command python3 -ErrorAction SilentlyContinue).Source }
+# Skip the Windows "App execution alias" stub at .../WindowsApps/python.exe -
+# it exists on PATH even when Python isn't actually installed, and just
+# prints an "install from the Microsoft Store" message instead of running
+# anything. Get-Command finds it before a real install further down PATH,
+# so it has to be filtered out explicitly rather than trusted.
+$candidates = @(Get-Command python -ErrorAction SilentlyContinue -All) + @(Get-Command python3 -ErrorAction SilentlyContinue -All)
+$python = ($candidates | Where-Object { $_.Source -notmatch 'WindowsApps' } | Select-Object -First 1).Source
 if (-not $python) {
-    Write-Error "Python not found on PATH. Install it first (python.org, or 'winget install Python.Python.3.13'), then re-run this script."
+    Write-Error "Python not found (only the Microsoft Store stub is on PATH, which doesn't count). Install a real Python first: python.org, or 'winget install Python.Python.3.13', then re-run this script."
     exit 1
 }
 Write-Output "Using Python: $python"
