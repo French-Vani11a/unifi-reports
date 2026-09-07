@@ -387,7 +387,10 @@ for (let h = 0; h < 24; h++) {
 
 function applyPreset(id) {
   filter.preset = id;
-  const now = dataMax;
+  const now = new Date(); // real wall-clock "today", not the data's own latest point -
+                           // using dataMax here would make "Today" silently stick to
+                           // whatever day the last successful poll happened to be on
+                           // if collection ever stalls, instead of showing the gap.
   if (id === 'today') {
     filter.dateFrom = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     filter.dateTo = now;
